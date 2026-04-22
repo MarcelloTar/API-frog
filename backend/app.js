@@ -24,7 +24,21 @@ app.get('/shake/:mood', (req, res) => {
 app.get('/cocktail_by_name/:name', (req, res) => {
     const {name} = req.params
     const alphabet = ['а', 'б', 'в', 'г', '', 'д', 'е', 'є', 'ж', 'з', 'и', 'і', 'ї', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ь', 'ю', 'я']
-    const letters = name.trim().toLocaleLowerCase().split('').map(a => alphabet.indexOf(a)).sort()
+    let error = true
+    const letters = name.trim().toLocaleLowerCase().split('').map(a => {
+        const number = alphabet.indexOf(a)
+        if (number == -1) {
+            error = false
+            return
+        } else {
+            return number
+        }
+    }).sort()
+    if (!error) {
+        return res.json({
+            message: `Введіть ім'я на кирилиці(українською мовою)`
+        }) 
+    }
     const ingredients_arr = Object.values(ingredients)[0];
     const ingredients_for_shake = letters.map(l => ingredients_arr[l])
     return res.json({
